@@ -37,6 +37,14 @@ export default function StudentForm({ initialData }) {
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
       <TextField
+        label="Subject"
+        variant="outlined"
+        value={formData.subject}
+        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+        fullWidth
+        required
+      />
+      <TextField
         label="Enter your grievance"
         multiline
         rows={4}

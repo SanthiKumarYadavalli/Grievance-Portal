@@ -106,9 +106,9 @@ export default function StaffForm({ initialData }) {
         <TextField
           ref={idRef}
           label="ID"
-          value={formData.StaffId}
+          value={formData.staffId}
           variant="outlined"
-          onChange={(e) => handleInputChange('StaffId', e.target.value)}
+          onChange={(e) => handleInputChange('staffId', e.target.value)}
           fullWidth
         />
 

@@ -3,6 +3,7 @@ import StudentForm from "./StudentForm";
 import StaffForm from "./StaffForm";
 import Admin from "./Admin";
 import { Container, Typography, Tabs, Tab, Box } from "@mui/material";
+import Admin from "./Admin";
 
 export default function TabbedForm() {
   const [activeTab, setActiveTab] = useState(0);
@@ -20,7 +21,7 @@ export default function TabbedForm() {
 
   return (
     <Container maxWidth="sm" style={{ marginTop: "2rem" }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography variant="h4" component="h1" gutterBottom align="center" style={{ marginBottom: "3rem" }}>
         Grievance Portal
       </Typography>
       <Tabs
