@@ -1,14 +1,11 @@
 import './App.css'
-import StudentForm from './components/StudentForm'
-import { Container, Typography } from '@mui/material'
+import { Container } from '@mui/material'
+import TabbedForm from './components/TabbedForm'
 
 function App() {
   return (
     <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Grievance
-      </Typography>
-      <StudentForm />
+      <TabbedForm />
     </Container>
   )
 }
