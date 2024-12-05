@@ -1,21 +1,9 @@
 import { useState, useEffect } from "react";
-import { formatDistanceToNow, parseISO } from "date-fns";
-import {
-  Box,
-  TextField,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { formatDistanceToNow } from "date-fns";
+import { Box, TextField, Button } from "@mui/material";
 import { getAllGreivances } from "../utils/firebaseFunctions";
+import SubmissionsList from "./SubmissionsList";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function Admin() {
   const [password, setPassword] = useState("");
@@ -23,8 +11,7 @@ export default function Admin() {
   const [submissions, setSubmissions] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredSubmissions, setFilteredSubmissions] = useState([]);
-  const [selectedSubmission, setSelectedSubmission] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const adminLoggedIn = localStorage.getItem("isAdminAuthenticated");
@@ -35,21 +22,36 @@ export default function Admin() {
   }, []);
 
   const handlePasswordSubmit = () => {
-    if (password === "admin123") {
+    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       localStorage.setItem("isAdminAuthenticated", "true");
       fetchSubmissions();
+      toast.success("Logged in successfully!");
     } else {
-      alert("Invalid password");
+      toast.error("Invalid password");
+    }
+  };
+
+  const changeFrom = (item) => {
+    if (item.from !== "student") {
+      item.from += " (" + item.staffType + ")";
+      if (item.staffType === "Out Source") {
+        item.from += " - " + item.outSourceType;
+      }
+      if (item.staffId) {
+        item.from += " - " + item.staffId;
+      }
     }
   };
 
   const fetchSubmissions = async () => {
+    setLoading(true);
     try {
       const data = await getAllGreivances();
       const formattedData = data.map((item) => {
         const createdDate = new Date(item.createdTime?.seconds * 1000);
         const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
+        changeFrom(item);
         return { ...item, createdTime: timeAgo };
       });
       console.log(formattedData);
@@ -58,6 +60,7 @@ export default function Admin() {
     } catch (error) {
       console.error("Error fetching grievances:", error);
     }
+    setLoading(false);
   };
 
   const handleSearchChange = (event) => {
@@ -73,18 +76,13 @@ export default function Admin() {
     setFilteredSubmissions(filtered);
   };
 
-  const handleListItemClick = (submission) => {
-    setSelectedSubmission(submission);
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-    setSelectedSubmission(null);
-  };
+  if (loading) {
+    return <p style={{ fontfamily: "Roboto, sans-serif", textAlign: "center", margin: "30px" }}>Loading...</p>;
+  }
 
   return (
     <Box>
+      <Toaster toastOptions={{ style: { fontFamily: "Roboto, system-ui" } }} />
       {!isAuthenticated ? (
         <Box>
           <TextField
@@ -105,66 +103,16 @@ export default function Admin() {
           </Button>
         </Box>
       ) : (
-        <Box>
-          <TextField
-            label="Search Submissions"
-            fullWidth
-            value={search}
-            onChange={handleSearchChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <List>
-            {filteredSubmissions.map((submission) => (
-              <ListItem
-                key={submission.id}
-                button
-                onClick={() => handleListItemClick(submission)}
-              >
-                <ListItemText
-                  primary={submission.subject}
-                  secondary={`From: ${submission.from}, Staff Type: ${submission.staffType}, Created: ${submission.createdTime}`}
-                />
-              </ListItem>
-            ))}
-          </List>
-          {selectedSubmission && (
-            <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth>
-              <DialogTitle>
-                {selectedSubmission.subject}
-                <IconButton
-                  aria-label="close"
-                  onClick={handleCloseDialog}
-                  sx={{
-                    position: "absolute",
-                    right: 8,
-                    top: 8,
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </DialogTitle>
-              <DialogContent dividers>
-                <Typography variant="body1" gutterBottom>
-                  <strong>Body:</strong> {selectedSubmission.body}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  <strong>From:</strong> {selectedSubmission.from}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  <strong>Staff Type:</strong> {selectedSubmission.staffType}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  <strong>Created:</strong> {selectedSubmission.createdTime}
-                </Typography>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseDialog} color="primary">
-                  Close
-                </Button>
-              </DialogActions>
-            </Dialog>
-          )}
-        </Box>
+        <>
+        <TextField
+          label="Search Submissions"
+          fullWidth
+          value={search}
+          onChange={handleSearchChange}
+          sx={{ marginBottom: 2 }}
+        />
+        <SubmissionsList submissions={filteredSubmissions} />
+        </>
       )}
     </Box>
   );

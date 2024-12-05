@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 
 
+// eslint-disable-next-line react/prop-types
 export default function StudentForm({ initialData }) {
   const [formData, setFormData] = useState({
     ...initialData,
