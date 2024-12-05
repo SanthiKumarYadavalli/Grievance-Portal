@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Box, TextField, Button } from "@mui/material";
 import { getAllGreivances } from "../utils/firebaseFunctions";
-import SubmissionsList from "./SubmissionsList";
 import { Toaster, toast } from "react-hot-toast";
+import TabbedSubmissionsList from "./TabbedSubmissionsList";
 
 export default function Admin() {
   const [password, setPassword] = useState("");
@@ -112,7 +112,7 @@ export default function Admin() {
           onChange={handleSearchChange}
           sx={{ marginBottom: 2 }}
         />
-        <SubmissionsList submissions={filteredSubmissions} />
+        <TabbedSubmissionsList submissions={filteredSubmissions} />
         </>
       )}
     </Box>

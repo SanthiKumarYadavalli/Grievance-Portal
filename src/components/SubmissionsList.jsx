@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import {
   List,
@@ -15,6 +14,7 @@ import {
 
 
 export default function SubmissionsList({submissions}) {
+  console.log(submissions);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

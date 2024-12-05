@@ -17,7 +17,6 @@ import {
   Typography,
 } from '@mui/material';
 
-// eslint-disable-next-line react/prop-types
 export default function StaffForm({ initialData }) {
   const [formData, setFormData] = useState({
     ...initialData,
@@ -56,7 +55,7 @@ export default function StaffForm({ initialData }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (formData.StaffId === '') {
+    if (formData.staffId === '') {
       setShowDialog(true);
       return;
     }
