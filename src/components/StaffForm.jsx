@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+import { createGreivance } from '../utils/firebaseFunctions';
+import { Toaster, toast } from 'react-hot-toast';
 import {
   Container,
   TextField,
@@ -15,19 +17,26 @@ import {
   Typography,
 } from '@mui/material';
 
-export default function StaffForm() {
+export default function StaffForm({ initialData }) {
   const [formData, setFormData] = useState({
-    staffType: '',
-    outSourceType: '',
-    StaffId: '',
-    subject: '',
-    body: '',
+    ...initialData,
+    from: 'staff'
   });
   const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   const idRef = useRef(null);
 
-  const sendForm = () => {
-    console.log('Form submitted');
+  const sendForm = async () => {
+    setLoading(true);
+    try {
+      const docId = await createGreivance(formData);
+      toast.success("Form submitted successfully!");
+      console.log(`Document written with ID: ${docId}`);
+    } catch (e) {
+      console.error('Error adding document: ', e);
+      toast.error('Failed to submit form. Please try again.');
+    }
+    setLoading(false);
   }
 
   const handleDialogClose = (submitAnonymously) => {
@@ -55,6 +64,7 @@ export default function StaffForm() {
 
   return (
     <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
+      <Toaster toastOptions={{ style: {fontFamily: "Roboto, system-ui"} }}/>
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -65,6 +75,7 @@ export default function StaffForm() {
           <InputLabel id="staff-type-label">Staff Type</InputLabel>
           <Select
             labelId="staff-type-label"
+            value={formData.staffType}
             onChange={(e) => handleInputChange('staffType', e.target.value)}
             label="Staff Type"
           >
@@ -80,6 +91,7 @@ export default function StaffForm() {
             <InputLabel id="out-source-type-label">Out Source Type</InputLabel>
             <Select
               labelId="out-source-type-label"
+              value={formData.outSourceType}
               onChange={(e) => handleInputChange('outSourceType', e.target.value)}
               label="Out Source Type"
             >
@@ -94,6 +106,7 @@ export default function StaffForm() {
         <TextField
           ref={idRef}
           label="ID"
+          value={formData.StaffId}
           variant="outlined"
           onChange={(e) => handleInputChange('StaffId', e.target.value)}
           fullWidth
@@ -103,6 +116,7 @@ export default function StaffForm() {
         <TextField
           label="Subject"
           variant="outlined"
+          value={formData.subject}
           onChange={(e) => handleInputChange('subject', e.target.value)}
           fullWidth
           required
@@ -113,6 +127,7 @@ export default function StaffForm() {
           label="Body"
           multiline
           rows={4}
+          value={formData.body}
           onChange={(e) => handleInputChange('body', e.target.value)}
           variant="outlined"
           fullWidth
@@ -120,7 +135,7 @@ export default function StaffForm() {
         />
 
         {/* Submit Button */}
-        <Button type="submit" variant="contained" color="primary" onSubmit={handleSubmit}>
+        <Button type="submit" variant="contained" color="primary" onSubmit={handleSubmit} disabled={loading}>
           Submit
         </Button>
       </Box>

@@ -5,6 +5,13 @@ import { Container, Typography, Tabs, Tab, Box } from "@mui/material";
 
 export default function TabbedForm() {
   const [activeTab, setActiveTab] = useState(0);
+  const initialData = {
+    body: "",
+    staffId: "",
+    staffType: "",
+    outSourceType: "",
+    subject: "",
+  }
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -26,8 +33,8 @@ export default function TabbedForm() {
         <Tab label="Staff" />
       </Tabs>
       <Box sx={{ marginTop: 2 }}>
-        {activeTab === 0 && <StudentForm />}
-        {activeTab === 1 && <StaffForm />}
+        {activeTab === 0 && <StudentForm initialData={initialData} />}
+        {activeTab === 1 && <StaffForm initialData={initialData} />}
       </Box>
     </Container>
   );
