@@ -64,6 +64,7 @@ export default function StaffForm({ initialData }) {
   };
 
   return (
+    <>
     <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
       <Toaster toastOptions={{ style: {fontFamily: "Roboto, system-ui"} }}/>
       <Box
@@ -157,5 +158,12 @@ export default function StaffForm({ initialData }) {
         </DialogActions>
       </Dialog>
     </Container>
+    <div style={{ position: 'fixed', textAlign: "right",
+        color: 'grey', fontSize: '0.8rem', fontFamily: 'sans-serif',
+        bottom: '0', right: '0', margin: '1rem'
+       }}>
+        Developed by SRC
+    </div>
+    </>
   );
 };

@@ -58,6 +58,12 @@ export default function StudentForm({ initialData }) {
         Submit
       </Button>
     </Box>
+      <div style={{ position: 'fixed', textAlign: "right",
+        color: 'grey', fontSize: '0.8rem', fontFamily: 'sans-serif',
+        bottom: '0', right: '0', margin: '1rem'
+       }}>
+        Developed by SRC
+      </div>
     </>
   );
 }

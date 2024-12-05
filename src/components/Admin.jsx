@@ -34,10 +34,11 @@ export default function Admin() {
 
   const changeFrom = (item) => {
     if (item.from !== "student") {
-      item.from += " (" + item.staffType + ")";
+      item.from += " (" + item.staffType;
       if (item.staffType === "Out Source") {
         item.from += " - " + item.outSourceType;
       }
+      item.from += ")";
       if (item.staffId) {
         item.from += " - " + item.staffId;
       }
