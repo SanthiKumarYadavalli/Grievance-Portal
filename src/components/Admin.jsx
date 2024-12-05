@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatDistanceToNow, parseISO } from "date-fns";
 import {
   Box,
   TextField,
@@ -6,7 +7,14 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { getAllGreivances } from "../utils/firebaseFunctions";
 
 export default function Admin() {
@@ -15,6 +23,8 @@ export default function Admin() {
   const [submissions, setSubmissions] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredSubmissions, setFilteredSubmissions] = useState([]);
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const adminLoggedIn = localStorage.getItem("isAdminAuthenticated");
@@ -37,8 +47,14 @@ export default function Admin() {
   const fetchSubmissions = async () => {
     try {
       const data = await getAllGreivances();
-      setSubmissions(data);
-      setFilteredSubmissions(data);
+      const formattedData = data.map((item) => {
+        const createdDate = new Date(item.createdTime?.seconds * 1000);
+        const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
+        return { ...item, createdTime: timeAgo };
+      });
+      console.log(formattedData);
+      setSubmissions(formattedData);
+      setFilteredSubmissions(formattedData);
     } catch (error) {
       console.error("Error fetching grievances:", error);
     }
@@ -55,6 +71,16 @@ export default function Admin() {
         submission.staffType.toLowerCase().includes(value)
     );
     setFilteredSubmissions(filtered);
+  };
+
+  const handleListItemClick = (submission) => {
+    setSelectedSubmission(submission);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedSubmission(null);
   };
 
   return (
@@ -89,14 +115,55 @@ export default function Admin() {
           />
           <List>
             {filteredSubmissions.map((submission) => (
-              <ListItem key={submission.id}>
+              <ListItem
+                key={submission.id}
+                button
+                onClick={() => handleListItemClick(submission)}
+              >
                 <ListItemText
                   primary={submission.subject}
-                  secondary={`From: ${submission.from}, Staff Type: ${submission.staffType}`}
+                  secondary={`From: ${submission.from}, Staff Type: ${submission.staffType}, Created: ${submission.createdTime}`}
                 />
               </ListItem>
             ))}
           </List>
+          {selectedSubmission && (
+            <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth>
+              <DialogTitle>
+                {selectedSubmission.subject}
+                <IconButton
+                  aria-label="close"
+                  onClick={handleCloseDialog}
+                  sx={{
+                    position: "absolute",
+                    right: 8,
+                    top: 8,
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent dividers>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Body:</strong> {selectedSubmission.body}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  <strong>From:</strong> {selectedSubmission.from}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Staff Type:</strong> {selectedSubmission.staffType}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Created:</strong> {selectedSubmission.createdTime}
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDialog} color="primary">
+                  Close
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
         </Box>
       )}
     </Box>

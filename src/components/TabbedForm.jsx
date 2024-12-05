@@ -1,6 +1,7 @@
 import { useState } from "react";
 import StudentForm from "./StudentForm";
 import StaffForm from "./StaffForm";
+import Admin from "./Admin";
 import { Container, Typography, Tabs, Tab, Box } from "@mui/material";
 
 export default function TabbedForm() {
@@ -11,7 +12,7 @@ export default function TabbedForm() {
     staffType: "",
     outSourceType: "",
     subject: "",
-  }
+  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -31,10 +32,12 @@ export default function TabbedForm() {
       >
         <Tab label="Student" />
         <Tab label="Staff" />
+        <Tab label="Admin" />
       </Tabs>
       <Box sx={{ marginTop: 2 }}>
         {activeTab === 0 && <StudentForm initialData={initialData} />}
         {activeTab === 1 && <StaffForm initialData={initialData} />}
+        {activeTab === 2 && <Admin />}
       </Box>
     </Container>
   );
