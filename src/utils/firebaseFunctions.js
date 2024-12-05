@@ -31,8 +31,7 @@ export const getAllGreivances = async () => {
     const submissions = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-
-      submissions.push(data);
+      submissions.push({ ...data, id: doc.id });
     });
     return submissions;
   } catch (e) {
