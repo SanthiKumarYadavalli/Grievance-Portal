@@ -12,9 +12,22 @@ const greivanceCollection = collection(db, "greivances");
 
 export const createGreivance = async (data) => {
   try {
+    const submissions = await getAllGreivances();
+    data.body = data.body.trim();
+    data.subject = data.subject.trim();
+    let spam = false;
+    submissions.forEach((submission) => {
+      if (
+        submission.subject === data.subject ||
+        submission.body === data.body
+      ) {
+        spam = true;
+      }
+    });
     const docRef = await addDoc(greivanceCollection, {
       ...data,
       createdTime: serverTimestamp(),
+      spam,
     });
     return docRef.id;
   } catch (e) {
@@ -33,6 +46,7 @@ export const getAllGreivances = async () => {
       const data = doc.data();
       submissions.push({ ...data, id: doc.id });
     });
+    console.log(submissions);
     return submissions;
   } catch (e) {
     console.error("Error fetching documents: ", e);
