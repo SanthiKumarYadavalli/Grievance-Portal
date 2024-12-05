@@ -46,7 +46,7 @@ export const getAllGreivances = async () => {
       const data = doc.data();
       submissions.push({ ...data, id: doc.id });
     });
-    console.log(submissions);
+    // console.log(submissions);
     return submissions;
   } catch (e) {
     console.error("Error fetching documents: ", e);
